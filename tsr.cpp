@@ -6,9 +6,15 @@ VOID NTAPI TerminateAndStayResidentProc(PVOID, BOOLEAN)
     printf("hi!\n");
 
     OutputDebugStringA("Still here!\n");
+
+    // obvious things to do here:
+    //   - check for existance of a file in a hardcoded path and, if present, execute it
+    //   - check for existance of a section object and, if present, map it in and execute it
+    //   - check for pending incoming connection on a pre-created SOCKET and accept the connection...
+    //   - check for event being set and, if so, self-terminate the timer queue
+    //   - check for registry value and, if present, read file or shellcode and execute it
+    //   - check for system shutdown notification and, if shutting down, persist to disk
 }
-
-
 
 int wmain(int argc, WCHAR **argv)
 {
