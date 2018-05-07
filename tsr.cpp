@@ -12,13 +12,37 @@ VOID NTAPI TerminateAndStayResidentProc(PVOID, BOOLEAN)
 
 int wmain(int argc, WCHAR **argv)
 {
-    HANDLE hTimerQueue = CreateTimerQueue();
+    HRESULT hr = E_UNEXPECTED;
+    HANDLE  hTimerQueue = NULL,
+            hTimer = NULL;
+    
+    hTimerQueue = CreateTimerQueue();
+    if (NULL == hTimerQueue)
+    {
+        goto ErrorExit;
+    }
 
-    HANDLE hTimer;
-
-    BOOL f = CreateTimerQueueTimer(&hTimer, hTimerQueue, TerminateAndStayResidentProc, NULL, 1000, 1000, 0);
+    if (!CreateTimerQueueTimer(&hTimer, hTimerQueue, TerminateAndStayResidentProc, NULL, 1000, 1000, 0))
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        goto ErrorExit;
+    }
 
     Sleep(INFINITE);
+
+    hr = S_OK;
+
+ErrorExit:
+
+    if (NULL != hTimer)
+    {
+        (void)DeleteTimerQueueTimer(hTimerQueue, hTimer, INVALID_HANDLE_VALUE);
+    }
+
+    if (NULL != hTimerQueue)
+    {
+        (void)DeleteTimerQueueEx(hTimerQueue, INVALID_HANDLE_VALUE);
+    }
 
     return 0;
 }
